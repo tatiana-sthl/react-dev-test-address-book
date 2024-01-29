@@ -12,6 +12,14 @@
   width: 100%;
 }
 
+.button.primary {
+  background-color: var(--color-brand);
+}
+
+.button.secondary {
+  background-color: var(--color-text-light);
+}
+
 .button:hover {
   transform: scale(1.05);
 }

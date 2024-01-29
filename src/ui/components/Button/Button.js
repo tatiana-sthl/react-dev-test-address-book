@@ -9,12 +9,17 @@ const Button = ({
   type = "button",
   variant = "primary", // or 'secondary'
 }) => {
+  const buttonClass = cx($.button, {
+    [$.primary]: variant === "primary",
+    [$.secondary]: variant === "secondary",
+  });
+
   return (
     <button
       // TODO: Add conditional classNames
       // - Must have a condition to set the '.primary' className
       // - Must have a condition to set the '.secondary' className
-      className={$.button}
+      className={buttonClass}
       type={type}
       onClick={onClick}
     >
