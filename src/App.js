@@ -8,6 +8,8 @@ import Radio from "./ui/components/Radio/Radio";
 import Section from "./ui/components/Section/Section";
 import transformAddress from "./core/models/address";
 import useAddressBook from "./ui/hooks/useAddressBook";
+import useFormFields from "./ui/hooks/useFormFields";
+import Form from "./ui/components/Form/Form";
 
 import "./App.css";
 
@@ -20,11 +22,13 @@ function App() {
    * - Remove all individual React.useState
    * - Remove all individual onChange handlers, like handleZipCodeChange for example
    */
-  const [zipCode, setZipCode] = React.useState("");
-  const [houseNumber, setHouseNumber] = React.useState("");
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [selectedAddress, setSelectedAddress] = React.useState("");
+
+  const { fields, handleChange } = useFormFields();
+  // const [zipCode, setZipCode] = React.useState("");
+  // const [houseNumber, setHouseNumber] = React.useState("");
+  // const [firstName, setFirstName] = React.useState("");
+  // const [lastName, setLastName] = React.useState("");
+  // const [selectedAddress, setSelectedAddress] = React.useState("");
   /**
    * Results states
    */
@@ -38,15 +42,15 @@ function App() {
   /**
    * Text fields onChange handlers
    */
-  const handleZipCodeChange = (e) => setZipCode(e.target.value);
+  // const handleZipCodeChange = (e) => setZipCode(e.target.value);
 
-  const handleHouseNumberChange = (e) => setHouseNumber(e.target.value);
+  // const handleHouseNumberChange = (e) => setHouseNumber(e.target.value);
 
-  const handleFirstNameChange = (e) => setFirstName(e.target.value);
+  // const handleFirstNameChange = (e) => setFirstName(e.target.value);
 
-  const handleLastNameChange = (e) => setLastName(e.target.value);
+  // const handleLastNameChange = (e) => setLastName(e.target.value);
 
-  const handleSelectedAddressChange = (e) => setSelectedAddress(e.target.value);
+  // const handleSelectedAddressChange = (e) => setSelectedAddress(e.target.value);
 
   const handleAddressSubmit = async (e) => {
     e.preventDefault();
@@ -63,18 +67,18 @@ function App() {
   const handlePersonSubmit = (e) => {
     e.preventDefault();
 
-    if (!selectedAddress || !addresses.length) {
-      setError(
-        "No address selected, try to select an address or find one if you haven't"
-      );
-      return;
-    }
+    // if (!selectedAddress || !addresses.length) {
+    //   setError(
+    //     "No address selected, try to select an address or find one if you haven't"
+    //   );
+    //   return;
+    // }
 
-    const foundAddress = addresses.find(
-      (address) => address.id === selectedAddress
-    );
+    // const foundAddress = addresses.find(
+    //   (address) => address.id === selectedAddress
+    // );
 
-    addAddress({ ...foundAddress, firstName, lastName });
+    // addAddress({ ...foundAddress, firstName, lastName });
   };
 
   return (
@@ -88,28 +92,25 @@ function App() {
           </small>
         </h1>
         {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
-        <form onSubmit={handleAddressSubmit}>
-          <fieldset>
-            <legend>🏠 Find an address</legend>
-            <div className="form-row">
-              <InputText
-                name="zipCode"
-                onChange={handleZipCodeChange}
-                placeholder="Zip Code"
-                value={zipCode}
-              />
-            </div>
-            <div className="form-row">
-              <InputText
-                name="houseNumber"
-                onChange={handleHouseNumberChange}
-                value={houseNumber}
-                placeholder="House number"
-              />
-            </div>
-            <Button type="submit">Find</Button>
-          </fieldset>
-        </form>
+        <Form onSubmit={handleAddressSubmit} legend="🏠 Find an address">
+          <div className="form-row">
+            <InputText
+              name="zipCode"
+              onChange={(e) => handleChange("zipCode", e.target.value)}
+              placeholder="Zip Code"
+              value={fields.zipCode}
+            />
+          </div>
+          <div className="form-row">
+            <InputText
+              name="houseNumber"
+              onChange={(e) => handleChange("houseNumber", e.target.value)}
+              value={fields.houseNumber}
+              placeholder="House number"
+            />
+          </div>
+          <Button type="submit">Find</Button>
+        </Form>
         {addresses.length > 0 &&
           addresses.map((address) => {
             return (
@@ -117,36 +118,33 @@ function App() {
                 name="selectedAddress"
                 id={address.id}
                 key={address.id}
-                onChange={handleSelectedAddressChange}
+                onChange={(e) => handleChange("selectedAddress", e.target.value)}
               >
                 <Address address={address} />
               </Radio>
             );
           })}
         {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
-        {selectedAddress && (
-          <form onSubmit={handlePersonSubmit}>
-            <fieldset>
-              <legend>✏️ Add personal info to address</legend>
-              <div className="form-row">
-                <InputText
-                  name="firstName"
-                  placeholder="First name"
-                  onChange={handleFirstNameChange}
-                  value={firstName}
-                />
-              </div>
-              <div className="form-row">
-                <InputText
-                  name="lastName"
-                  placeholder="Last name"
-                  onChange={handleLastNameChange}
-                  value={lastName}
-                />
-              </div>
-              <Button type="submit">Add to addressbook</Button>
-            </fieldset>
-          </form>
+        {fields.selectedAddress && (
+          <Form onSubmit={handlePersonSubmit} legend="✏️ Add personal info to address">
+          <div className="form-row">
+            <InputText
+              name="firstName"
+              placeholder="First name"
+              onChange={(e) => handleChange("firstName", e.target.value)}
+              value={fields.firstName}
+            />
+          </div>
+          <div className="form-row">
+            <InputText
+              name="lastName"
+              placeholder="Last name"
+              onChange={(e) => handleChange("lastName", e.target.value)}
+              value={fields.lastName}
+            />
+          </div>
+          <Button type="submit">Add to addressbook</Button>
+        </Form>
         )}
 
         {/* TODO: Create an <ErrorMessage /> component for displaying an error message */}
