@@ -6,10 +6,12 @@ import Button from "./ui/components/Button/Button";
 import InputText from "./ui/components/InputText/InputText";
 import Radio from "./ui/components/Radio/Radio";
 import Section from "./ui/components/Section/Section";
+import ErrorMessage from "./ui/components/Error/ErrorMessage";
+import Form from "./ui/components/Form/Form";
+
 // import transformAddress from "./core/models/address";
 import useAddressBook from "./ui/hooks/useAddressBook";
 import useFormFields from "./ui/hooks/useFormFields";
-import Form from "./ui/components/Form/Form";
 
 import "./App.css";
 
@@ -67,8 +69,7 @@ function App() {
     setError(undefined);
 
     try {
-      const apiUrl = `https://api-adresse.data.gouv.fr/search/?housenumber=${encodeURIComponent(fields.houseNumber)}&postcode=${encodeURIComponent(fields.zipCode)}`;
-
+      const apiUrl = `https://api-adresse.data.gouv.fr/search/?q=${fields.houseNumber}+${fields.zipCode}`;
 
       console.log("API URL:", apiUrl);
 
@@ -184,7 +185,7 @@ function App() {
         )}
 
         {/* TODO: Create an <ErrorMessage /> component for displaying an error message */}
-        {error && <div className="error">{error}</div>}
+        {error && <ErrorMessage message={error} />}
 
         {/* TODO: Add a button to clear all form fields. Button must look different from the default primary button, see design. */}
       </Section>
