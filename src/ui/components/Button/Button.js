@@ -12,7 +12,6 @@ const Button = ({
   const buttonClass = cx($.button, {
     [$.primary]: variant === "primary",
     [$.secondary]: variant === "secondary",
-    [$.clear]: variant === "clear"
   });
 
   return (
