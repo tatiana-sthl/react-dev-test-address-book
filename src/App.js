@@ -118,6 +118,20 @@ function App() {
     // addAddress({ ...foundAddress, firstName, lastName });
   };
 
+  const handleClearForm = () => {
+    // Réinitialisez tous les champs du formulaire en utilisant votre hook
+    handleChange("zipCode", "");
+    handleChange("houseNumber", "");
+    handleChange("firstName", "");
+    handleChange("lastName", "");
+    handleChange("selectedAddress", "");
+    // Réinitialisez également les états liés aux résultats
+    setError(undefined);
+    setAddresses([]);
+  };
+
+
+
   return (
     <main>
       <Section>
@@ -188,6 +202,7 @@ function App() {
         {error && <ErrorMessage message={error} />}
 
         {/* TODO: Add a button to clear all form fields. Button must look different from the default primary button, see design. */}
+        <Button type="button" onClick={handleClearForm} variant="clear">Clear</Button>
       </Section>
 
       <Section variant="dark">
