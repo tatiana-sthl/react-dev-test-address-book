@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Address from "./ui/components/Address/Address";
 import AddressBook from "./ui/components/AddressBook/AddressBook";
@@ -6,7 +6,7 @@ import Button from "./ui/components/Button/Button";
 import InputText from "./ui/components/InputText/InputText";
 import Radio from "./ui/components/Radio/Radio";
 import Section from "./ui/components/Section/Section";
-import transformAddress from "./core/models/address";
+// import transformAddress from "./core/models/address";
 import useAddressBook from "./ui/hooks/useAddressBook";
 import useFormFields from "./ui/hooks/useFormFields";
 import Form from "./ui/components/Form/Form";
@@ -32,12 +32,12 @@ function App() {
   /**
    * Results states
    */
-  const [error, setError] = React.useState(undefined);
-  const [addresses, setAddresses] = React.useState([]);
+  const [error, setError] = useState(undefined);
+  const [addresses, setAddresses] = useState([]);
   /**
    * Redux actions
    */
-  const { addAddress } = useAddressBook();
+  // const { addAddress } = useAddressBook();
 
   /**
    * Text fields onChange handlers
@@ -62,6 +62,42 @@ function App() {
      * - Make sure to add the houseNumber to each found address in the response using `transformAddress()` function
      * - Bonus: Add a loading state in the UI while fetching addresses
      */
+
+    setAddresses([]);
+    setError(undefined);
+
+    try {
+      const apiUrl = `https://api-adresse.data.gouv.fr/search/?housenumber=${encodeURIComponent(fields.houseNumber)}&postcode=${encodeURIComponent(fields.zipCode)}`;
+
+
+      console.log("API URL:", apiUrl);
+
+      const response = await fetch(apiUrl);
+
+      console.log("Response Status:", response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("API Response:", data);
+
+        if (data.features && data.features.length > 0) {
+          const transformedAddresses = data.features.map((feature) => ({
+            housenumber: feature.properties.housenumber,
+            postcode: feature.properties.postcode,
+          }));
+
+          console.log("Transformed Addresses:", transformedAddresses);
+
+          setAddresses(transformedAddresses);
+        } else {
+          setError("No addresses found for the given zip code and house number.");
+        }
+      } else {
+        setError(`Failed to fetch addresses. HTTP Status: ${response.status}`);
+      }
+    } catch (error) {
+      setError("An error occurred while fetching addresses.");
+    }
   };
 
   const handlePersonSubmit = (e) => {
