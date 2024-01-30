@@ -2,11 +2,9 @@ import React from 'react';
 import $ from "./ErrorMessage.module.css";
 
 const ErrorMessage = ({ message }) => {
-    const errorMessageClass = $['error-message'] || "";
-    console.log("Styles:", $);
 
   return (
-    <div className={errorMessageClass}>
+    <div className={$['error-message']}>
       <p>{message}</p>
     </div>
   );

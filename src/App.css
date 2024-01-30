@@ -32,6 +32,7 @@ body {
   font-size: 18px;
   font-family: var(--font-primary);
   background: var(--color-accent);
+  text-align: center;
 }
 
 main {
@@ -65,4 +66,5 @@ legend {
 
 .form-row {
   margin-bottom: 0.5em;
+  text-align: center;
 }
