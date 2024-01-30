@@ -202,7 +202,7 @@ function App() {
         {error && <ErrorMessage message={error} />}
 
         {/* TODO: Add a button to clear all form fields. Button must look different from the default primary button, see design. */}
-        <Button type="button" onClick={handleClearForm} variant="clear">Clear</Button>
+        <Button type="button" onClick={handleClearForm} variant="clear">Clear all fields</Button>
       </Section>
 
       <Section variant="dark">
