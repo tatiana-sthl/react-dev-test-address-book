@@ -17,12 +17,17 @@ const AddressBook = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleRemoveAddress = (addressId) => {
+    console.log("Removing address with ID:", addressId);
+    removeAddress(addressId);
+  };
+
   return (
     <section className={$.addressBook}>
       <h2>📓 Address book ({addresses.length})</h2>
       {!loading && (
         <>
-          {addresses.length === 0 && <p>No addresses found, try add one 😉</p>}
+          {addresses.length === 0 && <p>No addresses found, try adding one 😉</p>}
           {addresses.map((address) => {
             return (
               <Card key={address.id}>
@@ -36,7 +41,7 @@ const AddressBook = () => {
                   <div className={$.remove}>
                     <Button
                       variant="secondary"
-                      onClick={() => removeAddress(address.id)}
+                      onClick={() => handleRemoveAddress(address.id)}
                     >
                       Remove
                     </Button>

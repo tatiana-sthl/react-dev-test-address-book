@@ -1,5 +1,3 @@
-// Address.js
-
 import React from "react";
 import $ from "./Address.module.css";
 

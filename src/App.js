@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import Address from "./ui/components/Address/Address";
 import AddressBook from "./ui/components/AddressBook/AddressBook";
@@ -29,14 +29,6 @@ function App() {
   const { fields, handleChange } = useFormFields();
   const { addAddress } = useAddressBook();
 
- 
-
-
-  // const [zipCode, setZipCode] = React.useState("");
-  // const [houseNumber, setHouseNumber] = React.useState("");
-  // const [firstName, setFirstName] = React.useState("");
-  // const [lastName, setLastName] = React.useState("");
-  // const [selectedAddress, setSelectedAddress] = React.useState("");
   /**
    * Results states
    */
@@ -54,15 +46,6 @@ function App() {
   /**
    * Text fields onChange handlers
    */
-  // const handleZipCodeChange = (e) => setZipCode(e.target.value);
-
-  // const handleHouseNumberChange = (e) => setHouseNumber(e.target.value);
-
-  // const handleFirstNameChange = (e) => setFirstName(e.target.value);
-
-  // const handleLastNameChange = (e) => setLastName(e.target.value);
-
-  // const handleSelectedAddressChange = (e) => setSelectedAddress(e.target.value);
 
   const handleAddressSubmit = async (e) => {
     e.preventDefault();
@@ -114,12 +97,8 @@ function App() {
   };
 
   const handleSelectAddress = (selectedId) => {
-    // const selectedAddress = addresses.find((address) => address.id === selectedId);
-    // handleChange("selectedAddress", selectedId);
-    // console.log("Selected Address:", selectedAddress);
 
     const selectedAddress = addresses.find((address) => address.id === selectedId);
-    console.log()
     setSelectedAddress(selectedAddress);
     handleChange("selectedAddress", selectedId); // Mettez à jour le champ dans les états du formulaire
     console.log("Selected Address:", selectedAddress);
@@ -130,19 +109,6 @@ function App() {
   const handlePersonSubmit = (e) => {
     e.preventDefault();
     console.log("Addresses :", addresses);
-
-    // if (!selectedAddress || !addresses.length) {
-    //   setError(
-    //     "No address selected, try to select an address or find one if you haven't"
-    //   );
-    //   return;
-    // }
-
-    // const foundAddress = addresses.find(
-    //   (address) => address.id === selectedAddress
-    // );
-
-    // addAddress({ ...foundAddress, firstName, lastName });
 
     if (!fields.selectedAddress || !addresses.length) {
       setError("No address selected, try to select an address or find one if you haven't");
