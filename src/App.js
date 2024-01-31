@@ -119,13 +119,12 @@ function App() {
   };
 
   const handleClearForm = () => {
-    // Réinitialisez tous les champs du formulaire en utilisant votre hook
     handleChange("zipCode", "");
     handleChange("houseNumber", "");
     handleChange("firstName", "");
     handleChange("lastName", "");
     handleChange("selectedAddress", "");
-    // Réinitialisez également les états liés aux résultats
+    
     setError(undefined);
     setAddresses([]);
   };
