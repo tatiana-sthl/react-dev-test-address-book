@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Address from "./ui/components/Address/Address";
 import AddressBook from "./ui/components/AddressBook/AddressBook";
@@ -9,7 +9,7 @@ import Section from "./ui/components/Section/Section";
 import ErrorMessage from "./ui/components/Error/ErrorMessage";
 import Form from "./ui/components/Form/Form";
 
-// import transformAddress from "./core/models/address";
+import transformAddress from "./core/models/address";
 import useAddressBook from "./ui/hooks/useAddressBook";
 import useFormFields from "./ui/hooks/useFormFields";
 
@@ -26,6 +26,13 @@ function App() {
    */
 
   const { fields, handleChange } = useFormFields();
+  const { addAddress, loadSavedAddresses } = useAddressBook();
+
+  useEffect(() => {
+    loadSavedAddresses();
+  }, [loadSavedAddresses]);
+
+
   // const [zipCode, setZipCode] = React.useState("");
   // const [houseNumber, setHouseNumber] = React.useState("");
   // const [firstName, setFirstName] = React.useState("");
@@ -34,8 +41,11 @@ function App() {
   /**
    * Results states
    */
+
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const [error, setError] = useState(undefined);
   const [addresses, setAddresses] = useState([]);
+
   /**
    * Redux actions
    */
@@ -69,7 +79,7 @@ function App() {
     setError(undefined);
 
     try {
-      const apiUrl = `https://api-adresse.data.gouv.fr/search/?q=${fields.houseNumber}+${fields.zipCode}`;
+      const apiUrl = `https://api-adresse.data.gouv.fr/search/?q=${fields.houseNumber}+${fields.zipCode}&limit=50`;
 
       console.log("API URL:", apiUrl);
 
@@ -82,14 +92,15 @@ function App() {
         console.log("API Response:", data);
 
         if (data.features && data.features.length > 0) {
-          const transformedAddresses = data.features.map((feature) => ({
+          const addresses = data.features.map((feature) => ({
             housenumber: feature.properties.housenumber,
+            street : feature.properties.street,
             postcode: feature.properties.postcode,
-          }));
-
-          console.log("Transformed Addresses:", transformedAddresses);
-
-          setAddresses(transformedAddresses);
+            city : feature.properties.city,
+          }))
+          .filter((address) => address.housenumber !== undefined && address.housenumber !== null);
+  
+          setAddresses(addresses);
         } else {
           setError("No addresses found for the given zip code and house number.");
         }
@@ -100,6 +111,14 @@ function App() {
       setError("An error occurred while fetching addresses.");
     }
   };
+
+  const handleSelectAddress = (selectedId) => {
+    const selectedAddress = addresses.find((address) => address.id === selectedId);
+
+    // Utilisez l'adresse sélectionnée comme nécessaire
+    console.log("Selected Address:", selectedAddress.label);
+  };
+  
 
   const handlePersonSubmit = (e) => {
     e.preventDefault();
@@ -116,6 +135,22 @@ function App() {
     // );
 
     // addAddress({ ...foundAddress, firstName, lastName });
+
+    if (!fields.selectedAddress || !addresses.length) {
+      setError("No address selected, try to select an address or find one if you haven't");
+      return;
+    }
+  
+    const foundAddress = addresses.find(
+      (address) => address.id === fields.selectedAddress
+    );
+  
+
+    addAddress({
+      id: foundAddress.id, // Assurez-vous que la structure de l'adresse correspond à ce que votre backend ou service attend
+      firstName: fields.firstName,
+      lastName: fields.lastName,
+    });
   };
 
   const handleClearForm = () => {
@@ -168,7 +203,7 @@ function App() {
                 name="selectedAddress"
                 id={address.id}
                 key={address.id}
-                onChange={(e) => handleChange("selectedAddress", e.target.value)}
+                onChange={(e) => handleSelectAddress(address.id)}
               >
                 <Address address={address} />
               </Radio>

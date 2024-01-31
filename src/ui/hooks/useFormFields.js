@@ -1,18 +1,19 @@
-import { useState } from "react";
+// useFormFields.js
+import { useState } from 'react';
 
 const useFormFields = () => {
   const [fields, setFields] = useState({
-    zipCode: "",
-    houseNumber: "",
-    firstName: "",
-    lastName: "",
-    selectedAddress: "",
+    zipCode: '',
+    houseNumber: '',
+    firstName: '',
+    lastName: '',
+    selectedAddress: null, 
   });
 
-  const handleChange = (name, value) => {
+  const handleChange = (fieldName, value) => {
     setFields((prevFields) => ({
       ...prevFields,
-      [name]: value,
+      [fieldName]: value,
     }));
   };
 

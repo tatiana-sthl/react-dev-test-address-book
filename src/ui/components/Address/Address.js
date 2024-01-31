@@ -1,11 +1,12 @@
-import React from "react";
+// Address.js
 
+import React from "react";
 import $ from "./Address.module.css";
 
 const Address = ({ address }) => {
   return (
     <address className={$.address}>
-      {address.street} {address.houseNumber}, {address.postcode}, {address.city}
+      {address.housenumber} {address.street} , {address.postcode} {address.city}
     </address>
   );
 };
