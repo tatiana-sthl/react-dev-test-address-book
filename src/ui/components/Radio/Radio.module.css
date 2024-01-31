@@ -9,6 +9,7 @@
   max-width: var(--width-input);
   padding: 1em;
   width: 100%;
+  text-align : justify;
 }
 
 .radio:hover {
