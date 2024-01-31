@@ -16,32 +16,21 @@ import useFormFields from "./ui/hooks/useFormFields";
 import "./App.css";
 
 function App() {
+  
   /**
-   * Form fields states
-   * TODO: Write a custom hook to set form fields in a more generic way:
-   * - Hook must expose an onChange handler to be used by all <InputText /> and <Radio /> components
-   * - Hook must expose all text form field values, like so: { zipCode: '', houseNumber: '', ...etc }
-   * - Remove all individual React.useState
-   * - Remove all individual onChange handlers, like handleZipCodeChange for example
+   * Selects states
    */
-
-
   const { fields, handleChange } = useFormFields();
-  const { addAddress } = useAddressBook();
-
+  const [selectedAddress, setSelectedAddress] = useState(null);
   /**
    * Results states
    */
-
-
-  const [selectedAddress, setSelectedAddress] = useState(null);
   const [error, setError] = useState(undefined);
   const [addresses, setAddresses] = useState([]);
-
   /**
    * Redux actions
    */
-  // const { addAddress } = useAddressBook();
+  const { addAddress } = useAddressBook();
 
   /**
    * Text fields onChange handlers
@@ -50,39 +39,28 @@ function App() {
   const handleAddressSubmit = async (e) => {
     e.preventDefault();
 
-    /** TODO: Fetch addresses based on houseNumber and zipCode
-     * - Example URL of API: http://api.postcodedata.nl/v1/postcode/?postcode=1211EP&streetnumber=60&ref=domeinnaam.nl&type=json
-     * - Handle errors if they occur
-     * - Handle successful response by updating the `addresses` in the state using `setAddresses`
-     * - Make sure to add the houseNumber to each found address in the response using `transformAddress()` function
-     * - Bonus: Add a loading state in the UI while fetching addresses
-     */
-
     setAddresses([]);
     setError(undefined);
 
     try {
       const apiUrl = `https://api-adresse.data.gouv.fr/search/?q=${fields.houseNumber}+${fields.zipCode}&limit=50`;
 
-      console.log("API URL:", apiUrl);
-
       const response = await fetch(apiUrl);
-
-      console.log("Response Status:", response.status);
 
       if (response.ok) {
         const data = await response.json();
-        console.log("API Response:", data);
 
         if (data.features && data.features.length > 0) {
           const addresses = data.features.map((feature) => ({
-            housenumber: feature.properties.housenumber,
+            id : feature.properties.id,
+            houseNumber: feature.properties.housenumber,
             street : feature.properties.street,
             postcode: feature.properties.postcode,
             city : feature.properties.city,
-            id : feature.properties.id,
+            lat: feature.properties.x,
+            lon: feature.properties.y,
           }))
-          .filter((address) => address.housenumber !== undefined && address.housenumber !== null);
+          .filter((address) => address.houseNumber !== undefined && address.houseNumber !== null);
   
           setAddresses(addresses);
         } else {
@@ -97,39 +75,37 @@ function App() {
   };
 
   const handleSelectAddress = (selectedId) => {
-
     const selectedAddress = addresses.find((address) => address.id === selectedId);
+
     setSelectedAddress(selectedAddress);
-    handleChange("selectedAddress", selectedId); // Mettez à jour le champ dans les états du formulaire
-    console.log("Selected Address:", selectedAddress);
+
+    handleChange("selectedAddress", selectedId);
   };
 
   
 
   const handlePersonSubmit = (e) => {
     e.preventDefault();
-    console.log("Addresses :", addresses);
 
-    if (!fields.selectedAddress || !addresses.length) {
-      setError("No address selected, try to select an address or find one if you haven't");
+    if (!selectedAddress || !addresses.length) {
+      setError(
+        "No address selected, try to select an address or find one if you haven't"
+      );
       return;
     }
-  
-    const foundAddress = addresses.find(
-      (address) => address.id === fields.selectedAddress
-    );
 
-    console.log("Person Form Submitted:", {
-      selectedAddress: foundAddress,
+    const transformedAddress = transformAddress({
       firstName: fields.firstName,
       lastName: fields.lastName,
-    });  
-
-    addAddress({
-      id: foundAddress.id, // Assurez-vous que la structure de l'adresse correspond à ce que votre backend ou service attend
-      firstName: fields.firstName,
-      lastName: fields.lastName,
+      city: selectedAddress.city,
+      houseNumber: selectedAddress.houseNumber,
+      lat: selectedAddress.lat,
+      lon: selectedAddress.lon,
+      postcode: selectedAddress.postcode,
+      street: selectedAddress.street,
     });
+
+    addAddress(transformedAddress);
   };
 
   const handleClearForm = () => {
@@ -143,13 +119,6 @@ function App() {
     setAddresses([]);
   };
 
-  // console.log("Render - Fields:", fields);
-  // console.log("Render - Addresses:", addresses);
-  // console.log("Render - Selected Address:", selectedAddress);
-  // console.log("Render - Error:", error);
-
-
-
 
   return (
     <main>
@@ -161,8 +130,7 @@ function App() {
             Enter an address by zipcode add personal info and done! 👏
           </small>
         </h1>
-        {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
-        
+
         <Form onSubmit={handleAddressSubmit} legend="🏠 Find an address">
           <div className="form-row">
             <InputText
@@ -195,7 +163,6 @@ function App() {
               </Radio>
             );
           })}
-        {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
 
         {selectedAddress && (
           <Form onSubmit={handlePersonSubmit} legend="✏️ Add personal info to address">
@@ -219,10 +186,8 @@ function App() {
         </Form>
         )}
 
-        {/* TODO: Create an <ErrorMessage /> component for displaying an error message */}
         {error && <ErrorMessage message={error} />}
 
-        {/* TODO: Add a button to clear all form fields. Button must look different from the default primary button, see design. */}
         <Button type="button" onClick={handleClearForm} variant="secondary">Clear all fields</Button>
       </Section>
 

@@ -16,9 +16,6 @@ const Button = ({
 
   return (
     <button
-      // TODO: Add conditional classNames
-      // - Must have a condition to set the '.primary' className
-      // - Must have a condition to set the '.secondary' className
       className={buttonClass}
       type={type}
       onClick={onClick}

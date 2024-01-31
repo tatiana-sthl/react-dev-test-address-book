@@ -18,7 +18,6 @@ const AddressBook = () => {
   }, []);
 
   const handleRemoveAddress = (addressId) => {
-    console.log("Removing address with ID:", addressId);
     removeAddress(addressId);
   };
 
