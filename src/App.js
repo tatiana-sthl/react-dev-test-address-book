@@ -25,12 +25,11 @@ function App() {
    * - Remove all individual onChange handlers, like handleZipCodeChange for example
    */
 
-  const { fields, handleChange } = useFormFields();
-  const { addAddress, loadSavedAddresses } = useAddressBook();
 
-  useEffect(() => {
-    loadSavedAddresses();
-  }, [loadSavedAddresses]);
+  const { fields, handleChange } = useFormFields();
+  const { addAddress } = useAddressBook();
+
+ 
 
 
   // const [zipCode, setZipCode] = React.useState("");
@@ -41,6 +40,7 @@ function App() {
   /**
    * Results states
    */
+
 
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [error, setError] = useState(undefined);
@@ -97,6 +97,7 @@ function App() {
             street : feature.properties.street,
             postcode: feature.properties.postcode,
             city : feature.properties.city,
+            id : feature.properties.id,
           }))
           .filter((address) => address.housenumber !== undefined && address.housenumber !== null);
   
@@ -113,15 +114,22 @@ function App() {
   };
 
   const handleSelectAddress = (selectedId) => {
-    const selectedAddress = addresses.find((address) => address.id === selectedId);
+    // const selectedAddress = addresses.find((address) => address.id === selectedId);
+    // handleChange("selectedAddress", selectedId);
+    // console.log("Selected Address:", selectedAddress);
 
-    // Utilisez l'adresse sélectionnée comme nécessaire
-    console.log("Selected Address:", selectedAddress.label);
+    const selectedAddress = addresses.find((address) => address.id === selectedId);
+    console.log()
+    setSelectedAddress(selectedAddress);
+    handleChange("selectedAddress", selectedId); // Mettez à jour le champ dans les états du formulaire
+    console.log("Selected Address:", selectedAddress);
   };
+
   
 
   const handlePersonSubmit = (e) => {
     e.preventDefault();
+    console.log("Addresses :", addresses);
 
     // if (!selectedAddress || !addresses.length) {
     //   setError(
@@ -144,7 +152,12 @@ function App() {
     const foundAddress = addresses.find(
       (address) => address.id === fields.selectedAddress
     );
-  
+
+    console.log("Person Form Submitted:", {
+      selectedAddress: foundAddress,
+      firstName: fields.firstName,
+      lastName: fields.lastName,
+    });  
 
     addAddress({
       id: foundAddress.id, // Assurez-vous que la structure de l'adresse correspond à ce que votre backend ou service attend
@@ -164,6 +177,12 @@ function App() {
     setAddresses([]);
   };
 
+  // console.log("Render - Fields:", fields);
+  // console.log("Render - Addresses:", addresses);
+  // console.log("Render - Selected Address:", selectedAddress);
+  // console.log("Render - Error:", error);
+
+
 
 
   return (
@@ -177,6 +196,7 @@ function App() {
           </small>
         </h1>
         {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
+        
         <Form onSubmit={handleAddressSubmit} legend="🏠 Find an address">
           <div className="form-row">
             <InputText
@@ -210,7 +230,8 @@ function App() {
             );
           })}
         {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
-        {fields.selectedAddress && (
+
+        {selectedAddress && (
           <Form onSubmit={handlePersonSubmit} legend="✏️ Add personal info to address">
           <div className="form-row">
             <InputText

@@ -7,7 +7,7 @@ const useFormFields = () => {
     houseNumber: '',
     firstName: '',
     lastName: '',
-    selectedAddress: null, 
+    selectedAddress: "", 
   });
 
   const handleChange = (fieldName, value) => {
